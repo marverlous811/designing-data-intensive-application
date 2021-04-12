@@ -15,3 +15,25 @@
   - Tương thích xuôi (<i>Forward compatibility</i>): phiên bản cũ có thể đọc dữ liệu được tạo ra bởi phiên bản mới. Việc này có thể khó hơn, bởi vì nó yêu cầu code cũ phải bỏ qua phần được thêm vào từ phiên bản code mới.
 
 Trong chapter này chúng ta sẽ xem qua 1 vào format để encoding dữ liệu (JSON, XML, protocol buffers, Thirft???, Avro???), chúng ta sẽ tìm hiểu cách chúng xử lý các thay đổi của schema và các chúng hỗ trỡ việc tương thích giữa format cũ và mới. Chúng ta sẽ xem xét chúng trong việc lưu trữ và giao tiếp (web service, REST, RPC (message passing sytems such as actor and msg queue)) 
+
+### Formats for encoding data
+
+Các chương trình thường sẽ sử dụng 2 kiểu biển diễn dữ liệu
+
+- In memory: dữ liệu được luwu vào object, struct, list, mảng, hash tables, cây.... Những cấu trúc dữ liệu này được tối ưu để truy cập và xử lý bowri CPU (thông thường sẽ dưới dạng pointer)
+
+- Khi bạn muốn lưu dữ liệu ra file hoặc gửi chúng ra ngoài mạng, bạn phải chuyển hóa chúng thành 1 chuỗi các bytes
+
+Do đó, ta sẽ cần 1 kiểu biến đổi giữa 2 dạng biển diễn. Biến đổi từ memory thành sequence of byte được gọi là encode, serialization, marshalling và ngược lại thì được gọi là decode, parsing deserialization, unmarshalling
+
+### Language Specific Format 
+
+Các thư viện encoding rất là tiện lợi, vì chúng cho phép lưu lại và khôi phục các in-memory object với số lượng code ít. Tuy nhiên chúng sẽ có một vào vấn đề:
+
+- encoding thường bị ràng buộc bởi ngôn ngữ lập trình cụ thể và đọc dữ liệu từ 1 ngôn ngữ khác sẽ khá khó.
+
+- để khôi phục lại đúng kiểu dữ liệu, decoding cần phải có khăng năng khởi tạo. Điều này có thể gây ra một số vấn đề security: Kẻ tấn công có thể yêu cầu ứng dụng của bạn giải mã 1 chuỗi byte tùy ý nó có thể khởi tạo các lớp tùy ý cho phép chúng thực hiện những thứ kinh khủng từ xa tùy ý.
+
+- Phiên bản dữ liệu thường là một vấn đề cần cân nhắc trong số các thư viện này. vì chúng tập trung vào việc encoding nhanh chóng và dễ dàng, nên sẽ thường xuyên bỏ qua các vấn đề tương thích.
+
+- Hiệu năng cũng là vấn đề cần được cân nhắc
